@@ -1,0 +1,9 @@
+name: StarWelcome
+version: '${project.version}'
+main: com.mcstaralliance.starwelcome.StarWelcome
+api-version: '1.20'
+depend: [Vault]
+commands:
+  welcome:
+    description: Welcome a new player
+    usage: /welcome <player>
