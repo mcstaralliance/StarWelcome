@@ -101,25 +101,31 @@ public final class StarWelcome extends JavaPlugin implements Listener {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equalsIgnoreCase("welcome") && sender instanceof Player) {
             Player welcomer = (Player) sender;
-            if (args.length != 1) {
+            boolean isParamInvalid = args.length != 1;
+            if (isParamInvalid) {
                 return false;
             }
             Player welcomed = Bukkit.getPlayerExact(args[0]);
-            if (welcomed == null) {
+            boolean isExistingPlayer = welcomed == null;
+            boolean isSamePlayer = welcomed == welcomer;
+            boolean isOldPlayer = welcomed.hasPlayedBefore();
+            boolean hasNotBeenWelcomed = !welcomedPlayers.containsKey(welcomed.getName());
+            boolean hasBeenWelcomed = welcomedPlayers.get(welcomed.getName()).contains(welcomer.getName());
+            if (isExistingPlayer) {
                 return false;
             }
-            if (welcomed == welcomer) {
+            if (isSamePlayer) {
                 welcomer.sendMessage(ChatColor.RED + "不可以自己欢迎自己哦");
                 return true;
             }
-            if (welcomed.hasPlayedBefore()) {
+            if (isOldPlayer) {
                 return false;
             }
 
-            if (!welcomedPlayers.containsKey(welcomed.getName())) {
+            if (hasNotBeenWelcomed) {
                 welcomedPlayers.put(welcomed.getName(), new HashSet<>());
             }
-            if (welcomedPlayers.get(welcomed.getName()).contains(welcomer.getName())) {
+            if (hasBeenWelcomed) {
                 welcomer.sendMessage(ChatColor.RED + "你已经欢迎过这个玩家了!");
                 return true;
             }
