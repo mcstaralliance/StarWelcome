@@ -77,9 +77,6 @@ public final class StarWelcome extends JavaPlugin implements Listener {
                     player.spigot().sendMessage(message);
                 }
             }
-
-            // 给新玩家发送一个单独的欢迎消息
-            newPlayer.sendMessage(ChatColor.GREEN + "欢迎来到服务器！");
         }
     }
     private void loadWelcomeData() {
