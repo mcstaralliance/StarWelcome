@@ -73,7 +73,7 @@ public final class StarWelcome extends JavaPlugin implements Listener {
             message.addExtra(clickable);
 
             for (Player player : Bukkit.getOnlinePlayers()) {
-                if (player != newPlayer) {  // 给除新玩家外的所有人发送欢迎提示
+                if (!player.getUniqueId().equals(newPlayer.getUniqueId())) {  // 给除新玩家外的所有人发送欢迎提示
                     player.spigot().sendMessage(message);
                 }
             }
