@@ -23,6 +23,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+/**
+ * @param welcomedPlayers 第一个 String 是 welcomer 的玩家名，第二个 HashSet 存储所有欢迎过此人的玩家名
+ */
 public final class StarWelcome extends JavaPlugin implements Listener {
     private Economy econ = null;
     private HashMap<String, HashSet<String>> welcomedPlayers = new HashMap<>();
@@ -63,14 +66,14 @@ public final class StarWelcome extends JavaPlugin implements Listener {
         Player newPlayer = event.getPlayer();
         if (!newPlayer.hasPlayedBefore()) {
             TextComponent message = new TextComponent(ChatColor.GREEN + "欢迎新玩家 " + newPlayer.getName() + "! ");
-            TextComponent clickable = new TextComponent(ChatColor.YELLOW + "[点击欢迎]");
+            TextComponent clickable = new TextComponent(ChatColor.YELLOW + "[点我欢迎]");
             clickable.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/welcome " + newPlayer.getName()));
             clickable.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                     new ComponentBuilder("点击欢迎新玩家并获得奖励").create()));
             message.addExtra(clickable);
 
             for (Player player : Bukkit.getOnlinePlayers()) {
-                if (player != newPlayer) {  // 排除新玩家
+                if (player != newPlayer) {  // 给除新玩家外的所有人发送欢迎提示
                     player.spigot().sendMessage(message);
                 }
             }
@@ -106,31 +109,40 @@ public final class StarWelcome extends JavaPlugin implements Listener {
                 return false;
             }
             Player welcomed = Bukkit.getPlayerExact(args[0]);
+            /**
+             * welcomer 是欢迎了新玩家的玩家
+             * welcomed 是被欢迎的新玩家
+             */
             boolean isExistingPlayer = welcomed == null;
             boolean isSamePlayer = welcomed == welcomer;
             boolean isOldPlayer = welcomed.hasPlayedBefore();
-            boolean hasNotBeenWelcomed = !welcomedPlayers.containsKey(welcomed.getName());
+            boolean hasNotBeenWelcomedBefore = !welcomedPlayers.containsKey(welcomed.getName());
+            // hasNotBeenWelcomedBefore 指此玩家未被任何玩家欢迎过
             boolean hasBeenWelcomed = welcomedPlayers.get(welcomed.getName()).contains(welcomer.getName());
-            if (isExistingPlayer) {
-                return false;
+            if (!isExistingPlayer) {
+                welcomer.sendMessage(ChatColor.RED + "玩家不存在，请联系管理员");
+                return true;
             }
             if (isSamePlayer) {
-                welcomer.sendMessage(ChatColor.RED + "不可以自己欢迎自己哦");
+                welcomer.sendMessage(ChatColor.RED + "不可以自己欢迎自己");
                 return true;
             }
             if (isOldPlayer) {
-                return false;
+                welcomer.sendMessage(ChatColor.RED + "这不是一位新玩家，不能再次欢迎");
+                return true;
             }
 
-            if (hasNotBeenWelcomed) {
+            if (hasNotBeenWelcomedBefore) {
                 welcomedPlayers.put(welcomed.getName(), new HashSet<>());
+                // 因从未被欢迎过，所以要加到 HashMap 里，才能进行欢迎
             }
             if (hasBeenWelcomed) {
-                welcomer.sendMessage(ChatColor.RED + "你已经欢迎过这个玩家了!");
+                welcomer.sendMessage(ChatColor.RED + "你已经欢迎过这个玩家了");
                 return true;
             }
 
             welcomedPlayers.get(welcomed.getName()).add(welcomer.getName());
+            // 记录欢迎过新玩家的玩家名
 
             // 保存更新后的数据
             saveWelcomeData();
