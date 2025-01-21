@@ -8,5 +8,5 @@ commands:
     description: Welcome a new player
     usage: /welcome <player>
   welcometest:
-    description: Launch Welcome debug mode
+    description: Launch StarWelcome debug mode
     usage: /welcometest
