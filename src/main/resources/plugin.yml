@@ -7,3 +7,6 @@ commands:
   welcome:
     description: Welcome a new player
     usage: /welcome <player>
+  welcometest:
+    description: Launch Welcome debug mode
+    usage: /welcometest

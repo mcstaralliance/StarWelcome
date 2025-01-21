@@ -1,11 +1,13 @@
 package com.mcstaralliance.starwelcome.listener;
 
+import com.mcstaralliance.starwelcome.StarWelcome;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,9 +16,14 @@ import org.bukkit.event.player.PlayerJoinEvent;
 public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        if (event.getPlayer().hasPlayedBefore()) {
+        FileConfiguration config = StarWelcome.getInstance().getConfig();
+        boolean isDebug = config.getBoolean("debug");
+        if (isDebug) {
+            // do nothing
+        } else if (event.getPlayer().hasPlayedBefore()) {
             return;
         }
+
         Player newPlayer = event.getPlayer();
         broadcastWelcomeMessage(newPlayer);
 

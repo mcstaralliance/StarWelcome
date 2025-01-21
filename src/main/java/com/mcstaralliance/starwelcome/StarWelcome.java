@@ -1,5 +1,6 @@
 package com.mcstaralliance.starwelcome;
 
+import com.mcstaralliance.starwelcome.command.TestCommand;
 import com.mcstaralliance.starwelcome.command.WelcomeCommand;
 import com.mcstaralliance.starwelcome.listener.PlayerJoinListener;
 import net.md_5.bungee.api.chat.hover.content.Text;
@@ -37,6 +38,7 @@ public final class StarWelcome extends JavaPlugin implements Listener {
         if (!getDataFolder().exists()) {
             getDataFolder().mkdirs();
         }
+        saveDefaultConfig();
         if (!setupEconomy()) {
             getLogger().severe("Disabled due to no Vault dependency found!");
             getServer().getPluginManager().disablePlugin(this);
@@ -44,10 +46,10 @@ public final class StarWelcome extends JavaPlugin implements Listener {
         }
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
         this.getCommand("welcome").setExecutor(new WelcomeCommand());
+        this.getCommand("welcometest").setExecutor(new TestCommand());
 
         // 初始化欢迎数据文件
         welcomeDataFile = new File(getDataFolder(), "data.yml");
-
         if (!welcomeDataFile.exists()) {
             saveResource("data.yml", false);
         }

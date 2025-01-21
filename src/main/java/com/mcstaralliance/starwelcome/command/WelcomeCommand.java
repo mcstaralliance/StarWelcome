@@ -18,6 +18,8 @@ import java.util.HashSet;
 public class WelcomeCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        FileConfiguration config = StarWelcome.getInstance().getConfig();
+        boolean isDebug = config.getBoolean("debug");
         if (!(sender instanceof Player)) {
             return true;
         }
@@ -36,8 +38,8 @@ public class WelcomeCommand implements CommandExecutor {
             welcomer.sendMessage(ChatColor.RED + "玩家不存在或不在线，请联系管理员");
             return true;
         }
-        boolean isSamePlayer = welcomed.getName().equals(welcomer.getName());
-        boolean isOldPlayer = welcomed.hasPlayedBefore();
+        boolean isSamePlayer = isDebug ? false : welcomed.getName().equals(welcomer.getName());
+        boolean isOldPlayer = isDebug ? false : welcomed.hasPlayedBefore();
         HashMap<String, HashSet<String>> welcomedPlayers = getWelcomedPlayers();
         boolean hasNotBeenWelcomedBefore = !welcomedPlayers.containsKey(welcomed.getName());
         /*
@@ -47,7 +49,7 @@ public class WelcomeCommand implements CommandExecutor {
             welcomer.sendMessage(ChatColor.RED + "不可以自己欢迎自己");
             return true;
         }
-        if (isOldPlayer) {
+        if (isOldPlayer) { 
             welcomer.sendMessage(ChatColor.RED + "这不是一位新玩家，不能再次欢迎");
             return true;
         }
@@ -56,7 +58,7 @@ public class WelcomeCommand implements CommandExecutor {
             // 因从未被欢迎过，所以要加到 HashMap 里，才能进行欢迎
         }
 
-        boolean hasWelcomed = welcomedPlayers.get(welcomed.getName()).contains(welcomer.getName());
+        boolean hasWelcomed = isDebug ? false : welcomedPlayers.get(welcomed.getName()).contains(welcomer.getName());
         /*
          * hasWelcomed 表示老玩家是否已欢迎过此玩家
          */
@@ -75,7 +77,7 @@ public class WelcomeCommand implements CommandExecutor {
         StarWelcome.getInstance().getEcon().depositPlayer(welcomed, 1000);
         StarWelcome.getInstance().getEcon().depositPlayer(welcomer, 1000);
         welcomed.sendMessage(ChatColor.GREEN + welcomer.getName() + " 欢迎了你，你因此获得了 1000 硬币的新人奖励!");
-        welcomer.sendMessage(ChatColor.GREEN + "你因欢迎新玩家" + welcomed.getName() + "而获得了 1000 硬币的奖励!");
+        welcomer.sendMessage(ChatColor.GREEN + "你因欢迎新玩家 " + welcomed.getName() + " 而获得了 1000 硬币的奖励!");
         return true;
     }
 
